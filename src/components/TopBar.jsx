@@ -1,10 +1,18 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './TopBar.css';
 
 const TopBar = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    // Close menu on route change
+    useEffect(() => {
+        setIsMenuOpen(false);
+    }, [location]);
 
     const today = new Date().toLocaleDateString('en-US', {
         weekday: 'long',
@@ -79,7 +87,36 @@ const TopBar = () => {
 
     return (
         <header className="topbar">
+            {/* Mobile Menu Overlay */}
+            <div
+                className={`mobile-menu-overlay ${isMenuOpen ? 'open' : ''}`}
+                onClick={() => setIsMenuOpen(false)}
+            />
+
             <div className="topbar-left">
+                {/* Mobile Hamburger */}
+                <button
+                    className="mobile-menu-btn"
+                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                    aria-label="Toggle menu"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        {isMenuOpen ? (
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                        ) : (
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                        )}
+                        {isMenuOpen ? (
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        ) : (
+                            <>
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                <line x1="3" y1="18" x2="21" y2="18"></line>
+                            </>
+                        )}
+                    </svg>
+                </button>
+
                 <div className="topbar-brand">
                     <span className="topbar-brand-name">
                         Contractly
@@ -87,7 +124,16 @@ const TopBar = () => {
                     </span>
                 </div>
 
-                <nav className="topbar-nav">
+                <nav className={`topbar-nav ${isMenuOpen ? 'mobile-open' : ''}`}>
+                    <div className="mobile-nav-header">
+                        <span className="mobile-nav-title">Menu</span>
+                        <button className="mobile-close-btn" onClick={() => setIsMenuOpen(false)}>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
                     {navItems.map((item) => (
                         <NavLink
                             key={item.to}

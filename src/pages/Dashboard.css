@@ -440,9 +440,30 @@
 }
 
 /* Responsive */
+@media (max-width: 1024px) {
+    .dashboard-header h1 {
+        font-size: 2rem;
+    }
+
+    .stat-card {
+        padding: 20px;
+    }
+
+    .stat-value {
+        font-size: 1.8rem;
+    }
+}
+
 @media (max-width: 900px) {
     .dashboard-stats {
         grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+        max-width: 500px;
+        margin: 0 auto;
     }
 
     .dashboard-cards {

@@ -349,11 +349,55 @@
 }
 
 @media (max-width: 800px) {
-    .form-row {
+    .create-invoice {
+        padding: 0 16px 24px;
+        max-height: calc(100vh - 70px);
+    }
+
+    .create-invoice-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .header-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .form-row,
+    .form-group-row {
         grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .form-section {
+        padding: 18px 16px;
+    }
+
+    /* Wrap table for horizontal scroll */
+    .line-items-section {
+        overflow-x: auto;
+    }
+
+    .line-items-table {
+        min-width: 600px;
+        /* Force scroll if needed */
     }
 
     .invoice-summary {
         width: 100%;
+        margin-top: 20px;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+        gap: 12px;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
     }
 }

@@ -385,3 +385,23 @@ img {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* ===== GLOBAL RESPONSIVE ===== */
+@media (max-width: 600px) {
+  html {
+    font-size: 14px;
+  }
+
+  #root {
+    display: block;
+    /* Remove flex centering */
+    min-height: 100vh;
+    height: auto;
+  }
+
+  .app-main {
+    padding: 16px;
+    padding-bottom: 80px;
+    /* Space for bottom content if needed */
+  }
+}
