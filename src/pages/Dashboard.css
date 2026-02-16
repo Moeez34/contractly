@@ -477,4 +477,25 @@
     .dashboard-mascot {
         display: none;
     }
+
+    .dashboard-actions {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 16px;
+    }
+
+    .dashboard-actions-hint {
+        margin-bottom: 12px;
+        justify-content: center;
+    }
+
+    .action-buttons {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .action-btn {
+        flex: 1 1 auto;
+        justify-content: center;
+    }
 }
