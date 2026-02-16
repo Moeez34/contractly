@@ -170,7 +170,8 @@ body {
   animation: gradientShift 15s ease infinite;
   min-height: 100vh;
   line-height: 1.6;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 @keyframes gradientShift {
