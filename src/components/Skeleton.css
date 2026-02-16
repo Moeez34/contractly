@@ -1,0 +1,81 @@
+/* Base shimmer element */
+.skeleton {
+    background: linear-gradient(90deg,
+            rgba(220, 215, 230, 0.4) 0%,
+            rgba(240, 235, 248, 0.6) 40%,
+            rgba(220, 215, 230, 0.4) 80%);
+    background-size: 300% 100%;
+    animation: shimmer 1.6s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -100% 0;
+    }
+}
+
+/* Dashboard skeleton layout */
+.dashboard-skeleton {
+    padding: 8px 40px 32px;
+    max-width: 960px;
+    margin: 0 auto;
+    animation: fadeIn 0.3s ease;
+}
+
+.skel-greeting {
+    margin-bottom: 36px;
+}
+
+.skel-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.skel-stat-card {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: var(--radius-lg);
+    padding: 18px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.skel-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 32px;
+}
+
+.skel-feature-card {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: var(--radius-xl);
+    padding: 26px 22px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.skel-actions {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: var(--radius-xl);
+    padding: 14px 22px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    display: flex;
+    align-items: center;
+}
+
+@media (max-width: 900px) {
+    .skel-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .skel-cards {
+        grid-template-columns: 1fr;
+    }
+}
