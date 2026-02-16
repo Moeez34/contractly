@@ -26,3 +26,20 @@
   padding: 8px 0;
   margin-top: 4px;
 }
+
+@media (max-width: 600px) {
+  .app-layout {
+    padding: 10px;
+    align-items: stretch;
+    /* Stretch to full width */
+  }
+
+  .app-main {
+    width: 100%;
+    border-radius: 16px;
+    /* Smaller radius on mobile */
+    /* Remove huge blur/border on mobile for performance & space? 
+       Actually user liked the glass look, keep it but maybe less padding */
+    padding-bottom: 80px;
+  }
+}
