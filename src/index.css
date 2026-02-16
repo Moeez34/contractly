@@ -395,8 +395,8 @@ img {
   #root {
     display: block;
     /* Remove flex centering */
+    width: 100%;
     min-height: 100vh;
-    height: auto;
   }
 
   .app-main {
