@@ -3,6 +3,7 @@ import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './components/Toast';
 import PageTransition from './components/PageTransition';
 import TopBar from './components/TopBar';
+import Footer from './components/Footer';
 import Dashboard from './pages/Dashboard';
 import CreateInvoice from './pages/CreateInvoice';
 import InvoicePreview from './pages/InvoicePreview';
@@ -47,6 +48,7 @@ function App() {
                       <AppRoutes />
                     </PageTransition>
                   </main>
+                  <Footer />
                 </div>
               }
             />
