@@ -1,0 +1,46 @@
+.page-transition {
+    width: 100%;
+    height: 100%;
+    will-change: transform, opacity;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+.page-active {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+}
+
+/* Forward — slide in from right */
+.page-slide-fwd {
+    animation: slideFwd 0.25s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+
+/* Back — slide in from left */
+.page-slide-back {
+    animation: slideBack 0.25s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+
+@keyframes slideFwd {
+    from {
+        transform: translate3d(4%, 0, 0);
+        opacity: 0.4;
+    }
+
+    to {
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideBack {
+    from {
+        transform: translate3d(-4%, 0, 0);
+        opacity: 0.4;
+    }
+
+    to {
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+    }
+}

@@ -1,0 +1,46 @@
+.empty-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    padding: 40px;
+}
+
+.empty-state {
+    text-align: center;
+    animation: fadeUp 0.4s ease;
+}
+
+.empty-icon {
+    font-size: 2.8rem;
+    margin-bottom: 16px;
+    opacity: 0.7;
+}
+
+.empty-state h2 {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+}
+
+.empty-state p {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    max-width: 280px;
+    margin: 0 auto;
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
