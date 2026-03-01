@@ -142,6 +142,27 @@ const TopBar = () => {
             </div>
 
             <div className="topbar-right">
+                {user && user.plan !== 'pro' && (
+                    <button
+                        className="topbar-upgrade"
+                        onClick={() => navigate('/pricing')}
+                        style={{
+                            background: 'linear-gradient(135deg, var(--primary-500), var(--accent-purple))',
+                            color: '#fff',
+                            border: 'none',
+                            padding: '5px 14px',
+                            borderRadius: 'var(--radius-full)',
+                            fontSize: '0.75rem',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            boxShadow: '0 2px 10px rgba(92,124,250,0.3)',
+                            transition: 'all 0.2s',
+                            letterSpacing: '0.02em',
+                        }}
+                    >
+                        ✨ Upgrade
+                    </button>
+                )}
                 <span className="topbar-date">{today}</span>
                 {user ? (
                     <>

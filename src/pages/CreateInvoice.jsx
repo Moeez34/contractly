@@ -1,9 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { useToast } from '../components/Toast';
 import './CreateInvoice.css';
 
 const CreateInvoice = () => {
     const navigate = useNavigate();
+    const { token } = useAuth();
+    const toast = useToast();
+    const [saving, setSaving] = useState(false);
 
     const [invoice, setInvoice] = useState({
         fromName: 'moeez',
@@ -52,16 +57,50 @@ const CreateInvoice = () => {
     const taxAmount = subtotal * (invoice.taxRate / 100);
     const total = subtotal + taxAmount - invoice.discount;
 
-    const handlePreview = () => {
-        const invoiceData = {
-            ...invoice,
-            items,
-            subtotal,
-            taxAmount,
-            total,
-        };
-        localStorage.setItem('invoicePreview', JSON.stringify(invoiceData));
-        navigate('/preview');
+    const buildInvoiceData = (status = 'draft') => ({
+        ...invoice,
+        items,
+        subtotal,
+        taxAmount,
+        total,
+        status,
+    });
+
+    const saveInvoice = async (status = 'draft') => {
+        setSaving(true);
+        try {
+            const res = await fetch('http://localhost:5000/api/invoices', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(buildInvoiceData(status)),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error);
+            return data.invoice;
+        } catch (err) {
+            toast.error(err.message || 'Failed to save invoice');
+            return null;
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleSaveDraft = async () => {
+        const invoice = await saveInvoice('draft');
+        if (invoice) {
+            toast.success('Draft saved!');
+            navigate('/invoices');
+        }
+    };
+
+    const handlePreview = async () => {
+        const saved = await saveInvoice('draft');
+        if (saved) {
+            navigate(`/preview/${saved._id}`);
+        }
     };
 
     return (
@@ -273,13 +312,13 @@ const CreateInvoice = () => {
 
                 {/* Actions */}
                 <div className="form-actions">
-                    <button className="btn btn-secondary">
+                    <button className="btn btn-secondary" onClick={handleSaveDraft} disabled={saving}>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" /><polyline points="17 21 17 13 7 13 7 21" /><polyline points="7 3 7 8 15 8" /></svg>
-                        Save Draft
+                        {saving ? 'Saving...' : 'Save Draft'}
                     </button>
-                    <button className="btn btn-primary" onClick={handlePreview}>
+                    <button className="btn btn-primary" onClick={handlePreview} disabled={saving}>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
-                        Preview Invoice
+                        {saving ? 'Saving...' : 'Preview Invoice'}
                     </button>
                 </div>
             </div>

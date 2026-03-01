@@ -1,18 +1,36 @@
 import { useEffect, useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { useToast } from '../components/Toast';
 import './InvoicePreview.css';
 
 const InvoicePreview = () => {
     const navigate = useNavigate();
+    const { id } = useParams();
+    const { token } = useAuth();
+    const toast = useToast();
     const invoiceRef = useRef(null);
     const [invoice, setInvoice] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const data = localStorage.getItem('invoicePreview');
-        if (data) {
-            setInvoice(JSON.parse(data));
-        }
-    }, []);
+        const fetchInvoice = async () => {
+            try {
+                const res = await fetch(`http://localhost:5000/api/invoices/${id}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+                setInvoice(data.invoice);
+            } catch (err) {
+                toast.error(err.message || 'Failed to load invoice');
+            } finally {
+                setLoading(false);
+            }
+        };
+        if (id && token) fetchInvoice();
+        else setLoading(false);
+    }, [id, token]);
 
     const getCurrencySymbol = (currency) => {
         const symbols = { USD: '$', EUR: '€', GBP: '£', INR: '₹', CAD: 'C$', AUD: 'A$' };
@@ -31,6 +49,54 @@ const InvoicePreview = () => {
         };
         html2pdf().set(opt).from(element).save();
     };
+
+    const handleSend = async () => {
+        try {
+            const res = await fetch(`http://localhost:5000/api/invoices/${id}/status`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ status: 'sent' }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error);
+            setInvoice(data.invoice);
+            toast.success('Invoice marked as sent!');
+        } catch (err) {
+            toast.error(err.message || 'Failed to send invoice');
+        }
+    };
+
+    const handleMarkPaid = async () => {
+        try {
+            const res = await fetch(`http://localhost:5000/api/invoices/${id}/status`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ status: 'paid' }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error);
+            setInvoice(data.invoice);
+            toast.success('Invoice marked as paid!');
+        } catch (err) {
+            toast.error(err.message || 'Failed to update invoice');
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="invoice-preview-page">
+                <div className="preview-header">
+                    <h1>Loading...</h1>
+                </div>
+            </div>
+        );
+    }
 
     if (!invoice) {
         return (
@@ -59,10 +125,18 @@ const InvoicePreview = () => {
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>
                         Edit
                     </button>
-                    <button className="btn btn-secondary">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>
-                        Send
-                    </button>
+                    {invoice.status === 'draft' && (
+                        <button className="btn btn-secondary" onClick={handleSend}>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>
+                            Send
+                        </button>
+                    )}
+                    {invoice.status === 'sent' && (
+                        <button className="btn btn-secondary" onClick={handleMarkPaid}>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                            Mark Paid
+                        </button>
+                    )}
                     <button className="btn btn-primary" onClick={handleDownloadPDF}>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>
                         Download PDF
@@ -71,6 +145,22 @@ const InvoicePreview = () => {
             </div>
 
             <div className="invoice-document" ref={invoiceRef}>
+                {/* Status badge */}
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px' }}>
+                    <span style={{
+                        padding: '4px 14px',
+                        borderRadius: '20px',
+                        fontSize: '0.8rem',
+                        fontWeight: '600',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                        background: invoice.status === 'paid' ? '#dcfce7' : invoice.status === 'sent' ? '#dbeafe' : invoice.status === 'overdue' ? '#fee2e2' : '#f3f4f6',
+                        color: invoice.status === 'paid' ? '#16a34a' : invoice.status === 'sent' ? '#2563eb' : invoice.status === 'overdue' ? '#dc2626' : '#6b7280',
+                    }}>
+                        {invoice.status}
+                    </span>
+                </div>
+
                 {/* Header */}
                 <div className="invoice-doc-header">
                     <div className="invoice-doc-brand">

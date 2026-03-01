@@ -10,6 +10,7 @@ import InvoicePreview from './pages/InvoicePreview';
 import Invoices from './pages/Invoices';
 import Templates from './pages/Templates';
 import History from './pages/History';
+import Pricing from './pages/Pricing';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import './App.css';
@@ -19,10 +20,11 @@ function AppRoutes() {
     <Routes>
       <Route path="/" element={<Dashboard />} />
       <Route path="/create" element={<CreateInvoice />} />
-      <Route path="/preview" element={<InvoicePreview />} />
+      <Route path="/preview/:id" element={<InvoicePreview />} />
       <Route path="/invoices" element={<Invoices />} />
       <Route path="/templates" element={<Templates />} />
       <Route path="/history" element={<History />} />
+      <Route path="/pricing" element={<Pricing />} />
     </Routes>
   );
 }
